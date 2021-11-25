@@ -88,7 +88,7 @@ exports.createOne = async (req,res) => {
 exports.getMany = async (req, res) => {
   try{
     const [lists] = await pool.promise().query(`
-    SELECT id, name, ref, created_at, code FROM lists WHERE user_id = ? ORDER BY created_at DESC`, [req.user.id])
+    SELECT id, name, ref, created_at, code, private FROM lists WHERE user_id = ? ORDER BY created_at DESC`, [req.user.id])
     res.send(lists);
   }catch (e) {
     return res.status(500).send({message: "Internal server error", code: 51})
