@@ -74,7 +74,7 @@ exports.createOne = async (req,res) => {
     [name, ref, showPix, showAddress, private, code, req.user.id, ref])
 
     if(private){
-      res.send({...returnedList, accessCode:code});
+      res.send({...returnedList, code});
     }else{
       res.send(returnedList);
     }
