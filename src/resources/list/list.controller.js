@@ -54,13 +54,13 @@ exports.getOne = async (req,res) => {
 exports.createOne = async (req,res) => {
   try{
     const [ listArray ] = await pool.promise().query(`SELECT id FROM lists WHERE user_id = ?`,[req.user.id])
-    if(req.user.role !== 'premium' && listArray.length > 0){
+    if(req.user.role !== 'premium' && listArray.length >= 4){
       return res.send({message: "Lists limit exceeded", code: 301})
     }
     const { ref, name, showPix = false, showAddress = false, private = false} = await createOne.validateAsync(req.body)
     const code = (Math.random().toString(36)+'00000000000000000').slice(2, 7).toUpperCase();
     if(req.user.role !== 'premium'){
-      if(showPix || showAddress || private){
+      if(showPix || showAddress){
         return res.status(401).send();
       }
     }
@@ -88,7 +88,7 @@ exports.createOne = async (req,res) => {
 exports.getMany = async (req, res) => {
   try{
     const [lists] = await pool.promise().query(`
-    SELECT id, name, ref, created_at FROM lists WHERE user_id = ? ORDER BY created_at DESC`, [req.user.id])
+    SELECT id, name, ref, created_at, code FROM lists WHERE user_id = ? ORDER BY created_at DESC`, [req.user.id])
     res.send(lists);
   }catch (e) {
     return res.status(500).send({message: "Internal server error", code: 51})
@@ -97,9 +97,9 @@ exports.getMany = async (req, res) => {
 
 exports.deleteList = async (req, res) => {
   try{
-    if(req.user.role !== 'premium'){
-      return res.send({message: "Premium functionality", code: 300})
-    }
+    // if(req.user.role !== 'premium'){
+    //   return res.send({message: "Premium functionality", code: 300})
+    // }
     const { id } = await deleteList.validateAsync(req.body);
     const [{affectedRows}] = await pool.promise().query(`DELETE FROM lists WHERE id = ? AND user_id = ?`,[id, req.user.id])
     if(affectedRows <= 0){
