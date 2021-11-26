@@ -166,10 +166,11 @@ exports.deleteItem = async (req, res) => {
 exports.getOne = async (req, res) => {
   try{
     const { id } = req.params;
+    const [{user_id}] = await pool.promise().query(`SELECT user_id FROM list_items INNER JOIN lists ON lists.id = list_items.list_id WHERE list_items.id = ?`, id)
     if(user_id !== req.user.id){
       return res.status(401).send({message: "User not allowed", code:92})
     }
-
+    
     const [list] = await pool.promise().query(`
     SELECT description, (
       SELECT JSON_ARRAYAGG(
