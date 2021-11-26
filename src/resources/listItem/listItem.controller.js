@@ -162,3 +162,25 @@ exports.deleteItem = async (req, res) => {
     return res.status(500).send({message: "Internal server error", code: 51})
   }
 }
+
+exports.getOne = async (req, res) => {
+  try{
+    const { id } = req.params;
+    if(user_id !== req.user.id){
+      return res.status(401).send({message: "User not allowed", code:92})
+    }
+
+    const [list] = await pool.promise().query(`
+    SELECT description, (
+      SELECT JSON_ARRAYAGG(
+        JSON_OBJECT('id',id,'link',link)
+      ) FROM links WHERE list_item_id = item.id
+    ) as links, checked, item.id as id FROM list_items as item where id = ?`,
+    [ id ])
+    res.send({list});
+  }catch (e) {
+    console.error(e)
+    if(e.isJoi) return res.status(400).send({message: e.details[0].message, code: 61})
+    return res.status(500).send({message: "Internal server error", code: 51})
+  }
+}
