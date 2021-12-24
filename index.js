@@ -5,6 +5,7 @@ const cors = require('cors');
 require('dotenv').config()
 require('./src/utils/db.js');
 
+console.log('davi é lindo')
 
 const authRouter = require('./src/resources/auth/auth.router');
 const userRouter = require('./src/resources/user/user.router');
