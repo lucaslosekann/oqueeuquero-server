@@ -4,5 +4,6 @@ module.exports = {
   user     : process.env.DB_USERNAME,
   password : process.env.DB_PASS,
   database : process.env.DB_NAME,
-  multipleStatements: true
+  port: 3306,
+  multipleStatements: true,
 }
