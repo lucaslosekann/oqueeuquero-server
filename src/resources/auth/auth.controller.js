@@ -31,7 +31,7 @@ exports.signin = async (req, res) => {
               INNER JOIN roles ON roles.id = users.role_id WHERE email = ?`, [
         data.email,
       ]);
-    if (!user) {
+    if (!user?.[0]?.[0]) {
       return res.status(401).send(invalid);
     }
 
